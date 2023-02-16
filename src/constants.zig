@@ -14,5 +14,5 @@ pub const sector_size = 4096;
 /// WARNING: Disabling direct I/O is unsafe; the page cache cannot be trusted after an fsync error,
 /// even after an application panic, since the kernel will mark dirty pages as clean, even
 /// when they were never written to disk.
-pub const direct_io = false;
-pub const direct_io_required = false;
+pub const direct_io = true;
+pub const direct_io_required = true;
