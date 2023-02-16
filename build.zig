@@ -17,7 +17,7 @@ pub fn build(b: *std.Build) void {
 
     const module = b.addModule(.{
         .name = "io",
-        .source_file = .{ .path = "io.zig" },
+        .source_file = .{ .path = "src/io.zig" },
     });
 
     // We do not have an example of using the zig module yet.
