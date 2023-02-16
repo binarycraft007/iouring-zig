@@ -15,8 +15,16 @@ pub fn build(b: *std.Build) void {
     // set a preferred release mode, allowing the user to decide how to optimize.
     const optimize = b.standardOptimizeOption(.{});
 
+    const module = b.addModule(.{
+        .name = "io",
+        .source_file = .{ .path = "io.zig" },
+    });
+
+    // We do not have an example of using the zig module yet.
+    _ = module;
+
     const lib = b.addStaticLibrary(.{
-        .name = "iouring-zig",
+        .name = "io",
         // In this case the main source file is merely a path, however, in more
         // complicated build scripts, this could be a generated file.
         .root_source_file = .{ .path = "src/io.zig" },
