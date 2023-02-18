@@ -1,0 +1,27 @@
+name: Archlinux zig test action
+description: Builds and test zig packages
+
+branding:
+  icon: triangle
+  color: blue
+
+inputs:
+  zig_version:
+    description: >-
+      zig version to use for test
+    required: false
+  command:
+    description: >-
+      Command to run for build and test.
+    required: false
+  debug:
+    description: Turns debugging on
+    required: false
+
+runs:
+  using: docker
+  image: Dockerfile
+  args:
+    - ${{ inputs.zig_version }}
+    - ${{ inputs.command }}
+    - ${{ inputs.debug }}
