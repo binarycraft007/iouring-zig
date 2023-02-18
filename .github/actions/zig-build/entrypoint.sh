@@ -10,6 +10,7 @@ if [[ -n $DEBUG  && $DEBUG = true ]]; then
 fi
 
 zig_version=$1
+zig_pkg=zig-linux-x86_64-$zi_version.tar.xz
 command=$2
 
 
@@ -22,6 +23,8 @@ fi
 # is accessible by yay
 chown -R nobody /github/home
 
-yay -S zig-dev-bin --noconfirm
+wget https://ziglang.org/builds/$zig_pkg
+tar -xvf $zig_pkg -C /github/home/zig 
+export PATH=$PATH:/github/home/zig
 
 eval "$command"

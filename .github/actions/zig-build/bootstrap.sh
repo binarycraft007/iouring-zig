@@ -1,6 +1,6 @@
 #!/bin/bash
 pacman -Syu --noconfirm
-pacman -S base-devel namcap git --noconfirm
+pacman -S base-devel git wget --noconfirm
 pacman -Sc --noconfirm
 
 echo 'nobody ALL=(ALL:ALL) NOPASSWD: ALL' >> /etc/sudoers
