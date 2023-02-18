@@ -23,7 +23,8 @@ fi
 # is accessible by yay
 chown -R nobody /github/home
 
-wget https://ziglang.org/builds/$zig_pkg
+wget https://ziglang.org/builds/$zig_pkg \
+	> /dev/null 2&1
 mkdir -p /github/home/zig
 tar --strip-components=1 -xf $zig_pkg \
 	-C /github/home/zig 
