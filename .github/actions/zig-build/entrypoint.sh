@@ -10,7 +10,7 @@ if [[ -n $DEBUG  && $DEBUG = true ]]; then
 fi
 
 zig_version=$1
-zig_pkg=zig-linux-x86_64-$zi_version.tar.xz
+zig_pkg=zig-linux-x86_64-$zig_version.tar.xz
 command=$2
 
 
