@@ -25,7 +25,8 @@ chown -R nobody /github/home
 
 wget https://ziglang.org/builds/$zig_pkg
 mkdir -p /github/home/zig
-tar -xvf $zig_pkg -C /github/home/zig 
+tar --strip-components=1 -xf $zig_pkg \
+	-C /github/home/zig 
 export PATH=$PATH:/github/home/zig
 
 eval "$command"
