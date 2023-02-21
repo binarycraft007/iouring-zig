@@ -19,7 +19,7 @@ jobs:
         id: build-and-test
         uses: ./.github/actions/zig-build
         with:
-          zig_version: '0.11.0-dev.1647+c32171991'
+          zig_version: '0.11.0-dev.1711+dc1f50e50'
           command: 'zig build test'
 
       - name: Upload Build Artifacts
