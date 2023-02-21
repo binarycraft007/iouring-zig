@@ -132,7 +132,7 @@ pub const IO = struct {
     }
 
     fn flush_io(_: *IO, events: []os.Kevent, io_pending_top: *?*Completion) usize {
-        for (events) |*event, flushed| {
+        for (events, 0..) |*event, flushed| {
             const completion = io_pending_top.* orelse return flushed;
             io_pending_top.* = completion.next;
 

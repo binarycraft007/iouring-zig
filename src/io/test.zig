@@ -225,7 +225,7 @@ test "timeout" {
             defer self.io.deinit();
 
             var completions: [count]IO.Completion = undefined;
-            for (completions) |*completion| {
+            for (&completions) |*completion| {
                 self.io.timeout(
                     *Context,
                     &self,
@@ -275,7 +275,7 @@ test "submission queue full" {
             defer self.io.deinit();
 
             var completions: [count]IO.Completion = undefined;
-            for (completions) |*completion| {
+            for (&completions) |*completion| {
                 self.io.timeout(
                     *Context,
                     &self,
