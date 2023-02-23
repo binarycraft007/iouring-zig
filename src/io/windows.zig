@@ -72,7 +72,7 @@ pub const IO = struct {
                 // Round up sub-millisecond expire times to the next millisecond
                 const expires_ms = (expires_ns + (std.time.ns_per_ms / 2)) / std.time.ns_per_ms;
                 // Saturating cast to DWORD milliseconds
-                const expires = std.math.cast(os.windows.DWORD, expires_ms) catch std.math.maxInt(os.windows.DWORD);
+                const expires = std.math.cast(os.windows.DWORD, expires_ms) orelse std.math.maxInt(os.windows.DWORD);
                 // max DWORD is reserved for INFINITE so cap the cast at max - 1
                 timeout_ms = if (expires == os.windows.INFINITE) expires - 1 else expires;
             }
@@ -87,7 +87,7 @@ pub const IO = struct {
                 };
 
                 var events: [64]os.windows.OVERLAPPED_ENTRY = undefined;
-                const num_events = os.windows.GetQueuedCompletionStatusEx(
+                const num_events: u32 = os.windows.GetQueuedCompletionStatusEx(
                     self.iocp,
                     &events,
                     io_timeout,
@@ -356,14 +356,14 @@ pub const IO = struct {
                     }
 
                     // destroy the client_socket we created if we get a non WouldBlock error
-                    errdefer |result| {
-                        _ = result catch |err| switch (err) {
+                    errdefer |err| {
+                        switch (err) {
                             error.WouldBlock => {},
                             else => {
                                 os.closeSocket(op.client_socket);
                                 op.client_socket = INVALID_SOCKET;
                             },
-                        };
+                        }
                     }
 
                     return switch (os.windows.ws2_32.WSAGetLastError()) {
@@ -463,6 +463,7 @@ pub const IO = struct {
                             Overlapped: *os.windows.OVERLAPPED,
                         ) callconv(os.windows.WINAPI) os.windows.BOOL;
 
+                        // TODO https://github.com/ziglang/zig/issues/13893
                         // Find the ConnectEx function by dynamically looking it up on the socket.
                         const connect_ex = os.windows.loadWinsockExtensionFunction(
                             LPFN_CONNECTEX,
@@ -728,17 +729,7 @@ pub const IO = struct {
         );
     }
 
-    pub const ReadError = error{
-        WouldBlock,
-        NotOpenForReading,
-        ConnectionResetByPeer,
-        Alignment,
-        InputOutput,
-        IsDir,
-        SystemResources,
-        Unseekable,
-        ConnectionTimedOut,
-    } || os.UnexpectedError;
+    pub const ReadError = std.os.PReadError || os.UnexpectedError;
 
     pub fn read(
         self: *IO,
