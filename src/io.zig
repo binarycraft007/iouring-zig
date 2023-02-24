@@ -3,7 +3,9 @@ const builtin = @import("builtin");
 const assert = std.debug.assert;
 const os = std.os;
 
-const FIFO = @import("fifo.zig").FIFO;
+pub const FIFO = @import("fifo.zig").FIFO;
+pub const Time = @import("time.zig").Time;
+
 const IO_Linux = @import("io/linux.zig").IO;
 const IO_Darwin = @import("io/darwin.zig").IO;
 const IO_Windows = @import("io/windows.zig").IO;
