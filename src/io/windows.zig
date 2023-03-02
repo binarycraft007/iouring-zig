@@ -463,7 +463,6 @@ pub const IO = struct {
                             Overlapped: *os.windows.OVERLAPPED,
                         ) callconv(os.windows.WINAPI) os.windows.BOOL;
 
-                        // TODO https://github.com/ziglang/zig/issues/13893
                         // Find the ConnectEx function by dynamically looking it up on the socket.
                         const connect_ex = os.windows.loadWinsockExtensionFunction(
                             LPFN_CONNECTEX,

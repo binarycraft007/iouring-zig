@@ -1,29 +1,41 @@
-name: CI
-
+name: ci
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
-
-  workflow_dispatch:
-
+  push:
+    branches:
+      - main
+concurrency:
+  # Cancels pending runs when a PR gets updated.
+  group: ${{ github.head_ref || github.run_id }}-${{ github.actor }}
+  cancel-in-progress: true
 jobs:
-  validation:
-    runs-on: ubuntu-latest
-    name: Validate a Pull Request
+  x86_64-linux-debug:
+    timeout-minutes: 420
+    runs-on: "ubuntu-latest"
+    env:
+      zig_version: "0.11.0-dev.1824+a7a709aaa"
     steps:
-      - uses: actions/checkout@v1
-
-      - name: Build and run test
-        id: build-and-test
-        uses: ./.github/actions/zig-build
-        with:
-          zig_version: '0.11.0-dev.1711+dc1f50e50'
-          command: 'zig build test'
-
-      - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v3.1.2
-        with:
-          name: zig-out
-          path: zig-out
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build and Test
+        run: sh ci/x86_64-linux-debug.sh
+  x86_64-macos-debug:
+    timeout-minutes: 420
+    runs-on: "macos-11"
+    env:
+      zig_version: "0.11.0-dev.1824+a7a709aaa"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build and Test
+        run: sh ci/x86_64-macos-debug.sh
+  x86_64-windows-debug:
+    timeout-minutes: 420
+    runs-on: "windows-latest"
+    env:
+      zig_version: "0.11.0-dev.1824+a7a709aaa"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build and Test
+        run: ci/x86_64-windows-debug.ps1
