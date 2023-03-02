@@ -1,16 +1,12 @@
 #!/bin/sh
 zig_pkg=zig-linux-x86_64-$zig_version.tar.xz
-
-if [[ $command == "" ]]
-then
-	command="zig build test"
-fi
+command="zig build test"
 
 wget https://ziglang.org/builds/$zig_pkg \
 	> /dev/null 2>&1
-mkdir -p /github/home/zig
+mkdir -p $pwd/zig
 tar --strip-components=1 -xf $zig_pkg \
-	-C /github/home/zig 
-export PATH=$PATH:/github/home/zig
+	-C $pwd/zig 
+export PATH=$PATH:$pwd/zig
 
 eval "$command"

@@ -7,12 +7,14 @@ if ($command -eq $null) {
 	$command = "zig build test"
 }
 
+$pwd=$(Get-Location).Path
+
 Start-BitsTransfer `
 	-Source "https://ziglang.org/builds/$zig_pkg" `
-	-Destination .\
+	-Destination "$pwd"
 
-mkdir zig
+mkdir "$pwd"\zig
 
-tar --strip-components=1 -xf $zig_pkg -C zig
-$env:Path += ';C:\github\home\zig'
+tar --strip-components=1 -xf $zig_pkg -C "$pwd\zig"
+$env:Path += ";$pwd\zig"
 Invoke-Expression "$command"
