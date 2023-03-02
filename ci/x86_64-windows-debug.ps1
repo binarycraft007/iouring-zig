@@ -13,7 +13,7 @@ Start-BitsTransfer `
 	-Source "https://ziglang.org/builds/$zig_pkg" `
 	-Destination "$pwd"
 
-mkdir "$pwd"\zig
+mkdir "$pwd\zig"
 
 tar --strip-components=1 -xf $zig_pkg -C "$pwd\zig"
 $env:Path += ";$pwd\zig"
