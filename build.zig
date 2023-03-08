@@ -15,10 +15,10 @@ pub fn build(b: *std.Build) void {
     // set a preferred release mode, allowing the user to decide how to optimize.
     const optimize = b.standardOptimizeOption(.{});
 
-    b.addModule(.{
-        .name = "io",
-        .source_file = .{ .path = "src/io.zig" },
-    });
+    var io_module = b.addModule(
+        "io",
+        .{ .source_file = .{ .path = "src/io.zig" } },
+    );
 
     const exe = b.addExecutable(.{
         .name = "benchmark",
@@ -28,7 +28,7 @@ pub fn build(b: *std.Build) void {
         .target = target,
         .optimize = optimize,
     });
-    exe.addModule("io", b.modules.get("io").?);
+    exe.addModule("io", io_module);
 
     // This declares intent for the library to be installed into the standard
     // location when the user invokes the "install" step (the default step when
