@@ -16,10 +16,10 @@ pub const IO = struct {
 
     /// Operations not yet submitted to the kernel and waiting on available space in the
     /// submission queue.
-    unqueued: FIFO(Completion) = .{},
+    unqueued: FIFO(Completion) = .{ .name = "io_unqueued" },
 
     /// Completions that are ready to have their callbacks run.
-    completed: FIFO(Completion) = .{},
+    completed: FIFO(Completion) = .{ .name = "io_completed" },
 
     pub fn init(entries: u12, flags: u32) !IO {
         // Detect the linux version to ensure that we support all io_uring ops used.
@@ -100,21 +100,27 @@ pub const IO = struct {
         try self.flush_submissions(wait_nr, timeouts, etime);
         // We can now just peek for any CQEs without waiting and without another syscall:
         try self.flush_completions(0, timeouts, etime);
-        // Run completions only after all completions have been flushed:
-        // Loop on a copy of the linked list, having reset the list first, so that any synchronous
-        // append on running a completion is executed only the next time round the event loop,
-        // without creating an infinite loop.
-        {
-            var copy = self.completed;
-            self.completed = .{};
-            while (copy.pop()) |completion| completion.complete();
-        }
-        // Again, loop on a copy of the list to avoid an infinite loop:
+
+        // The SQE array is empty from flush_submissions(). Fill it up with unqueued completions.
+        // This runs before `self.completed` is flushed below to prevent new IO from reserving SQE
+        // slots and potentially starving those in `self.unqueued`.
+        // Loop over a copy to avoid an infinite loop of `enqueue()` re-adding to `self.unqueued`.
         {
             var copy = self.unqueued;
-            self.unqueued = .{};
+            self.unqueued.reset();
             while (copy.pop()) |completion| self.enqueue(completion);
         }
+
+        // Run completions only after all completions have been flushed:
+        // Loop until all completions are processed. Calls to complete() may queue more work
+        // and extend the duration of the loop, but this is fine as it 1) executes completions
+        // that become ready without going through another syscall from flush_submissions() and
+        // 2) potentially queues more SQEs to take advantage more of the next flush_submissions().
+        while (self.completed.pop()) |completion| completion.complete();
+
+        // At this point, unqueued could have completions either by 1) those who didn't get an SQE
+        // during the popping of unqueued or 2) completion.complete() which start new IO. These
+        // unqueued completions will get priority to acquiring SQEs on the next flush().
     }
 
     fn flush_completions(self: *IO, wait_nr: u32, timeouts: *usize, etime: *bool) !void {

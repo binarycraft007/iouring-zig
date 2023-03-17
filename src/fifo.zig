@@ -9,6 +9,9 @@ pub fn FIFO(comptime T: type) type {
 
         in: ?*T = null,
         out: ?*T = null,
+        count: u64 = 0,
+        // This should only be null if you're sure we'll never want to monitor `count`.
+        name: ?[]const u8,
 
         pub fn push(self: *Self, elem: *T) void {
             assert(elem.next == null);
@@ -20,6 +23,7 @@ pub fn FIFO(comptime T: type) type {
                 self.in = elem;
                 self.out = elem;
             }
+            self.count += 1;
         }
 
         pub fn pop(self: *Self) ?*T {
@@ -27,6 +31,7 @@ pub fn FIFO(comptime T: type) type {
             self.out = ret.next;
             ret.next = null;
             if (self.in == ret) self.in = null;
+            self.count -= 1;
             return ret;
         }
 
@@ -52,9 +57,14 @@ pub fn FIFO(comptime T: type) type {
                     if (to_remove == self.in) self.in = elem;
                     elem.next = to_remove.next;
                     to_remove.next = null;
+                    self.count -= 1;
                     break;
                 }
             } else unreachable;
+        }
+
+        pub fn reset(self: *Self) void {
+            self.* = .{ .name = self.name };
         }
     };
 }
@@ -68,7 +78,7 @@ test "push/pop/peek/remove/empty" {
     var two: Foo = .{};
     var three: Foo = .{};
 
-    var fifo: FIFO(Foo) = .{};
+    var fifo: FIFO(Foo) = .{ .name = null };
     try testing.expect(fifo.empty());
 
     fifo.push(&one);
