@@ -18,7 +18,7 @@ pub fn main() !void {
     const allocator = gpa.allocator();
     defer {
         const leaks = gpa.deinit();
-        assert(!leaks);
+        assert(leaks == .ok);
     }
 
     const buffer = try allocator.alloc(u8, buffer_size * 2);
