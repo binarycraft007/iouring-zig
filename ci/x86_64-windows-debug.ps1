@@ -4,7 +4,7 @@ $command = $($Env:command)
 
 
 if ($command -eq $null) {
-	$command = "zig build test"
+	$command = "zig build test -fsummary"
 }
 
 $pwd=$(Get-Location).Path
