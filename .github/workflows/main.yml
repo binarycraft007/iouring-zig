@@ -13,7 +13,7 @@ jobs:
     timeout-minutes: 420
     runs-on: "ubuntu-latest"
     env:
-      zig_version: "0.11.0-dev.2839+d0311e28b"
+      zig_version: "0.11.0-dev.2868+1a455b2dd"
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -23,7 +23,7 @@ jobs:
     timeout-minutes: 420
     runs-on: "macos-11"
     env:
-      zig_version: "0.11.0-dev.2839+d0311e28b"
+      zig_version: "0.11.0-dev.2868+1a455b2dd"
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -33,7 +33,7 @@ jobs:
     timeout-minutes: 420
     runs-on: "windows-latest"
     env:
-      zig_version: "0.11.0-dev.2839+d0311e28b"
+      zig_version: "0.11.0-dev.2868+1a455b2dd"
     steps:
       - name: Checkout
         uses: actions/checkout@v3
