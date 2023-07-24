@@ -1,6 +1,6 @@
 #!/bin/sh
 zig_pkg=zig-linux-x86_64-$zig_version.tar.xz
-command="zig build test -fsummary"
+command="zig build test --summary all"
 
 wget https://ziglang.org/builds/$zig_pkg \
 	> /dev/null 2>&1
